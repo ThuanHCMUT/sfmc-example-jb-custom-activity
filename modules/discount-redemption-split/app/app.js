@@ -19,7 +19,7 @@ module.exports = function splitExample(app, options) {
         // you can use your favorite templating library to generate your html file.
         // this example keeps things simple and just returns a static file
         res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.exacttarget.com https://*.marketingcloudapps.com https://*.salesforce.com");
-        res.removeHeader('X-Frame-Options'); 
+        res.removeHeader('X-Frame-Options');
         return res.sendFile(`${moduleDirectory}/html/index.html`);
     });
 
