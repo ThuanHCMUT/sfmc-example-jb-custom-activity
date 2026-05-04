@@ -5,8 +5,8 @@ module.exports = function configJSON(req) {
     workflowApiVersion: '1.1',
     metaData: {
       // the location of our icon file
-      icon: `images/icon.svg`,
-      category: 'customer'
+      icon: `https://${host}/modules/discount-redemption-split/images/icon.svg`,
+      category: 'Custom'
     },
     // For Custom Activity this must say, "REST"
     type: 'RESTDECISION',
