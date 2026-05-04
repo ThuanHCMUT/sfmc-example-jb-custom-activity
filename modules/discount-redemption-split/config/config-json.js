@@ -1,5 +1,6 @@
 // Takes the config and returns the config with the fully qualified paths based on the domain that is hosting it.
 module.exports = function configJSON(req) {
+  const host = req.headers.host;
   return {
     workflowApiVersion: '1.1',
     metaData: {
@@ -24,21 +25,21 @@ module.exports = function configJSON(req) {
         outArguments: [],
         // Fill in the host with the host that this is running on.
         // It must run under HTTPS
-        url: `https://${req.headers.host}/modules/discount-redemption-split/execute`
+        url: `https://${host}/modules/discount-redemption-split/execute`
       }
     },
     configurationArguments: {
       save: {
-        url: `https://${req.headers.host}/modules/discount-redemption-split/save`
+        url: `https://${host}/modules/discount-redemption-split/save`
       },
       publish: {
-        url: `https://${req.headers.host}/modules/discount-redemption-split/publish`
+        url: `https://${host}/modules/discount-redemption-split/publish`
       },
       validate: {
-        url: `https://${req.headers.host}/modules/discount-redemption-split/validate`
+        url: `https://${host}/modules/discount-redemption-split/validate`
       },
       stop: {
-        url: `https://${req.headers.host}/modules/discount-redemption-split/stop`
+        url: `https://${host}/modules/discount-redemption-split/stop`
       }
     },
     userInterfaces: {

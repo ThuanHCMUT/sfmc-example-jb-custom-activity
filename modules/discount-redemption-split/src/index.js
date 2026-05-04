@@ -84,11 +84,11 @@ function requestedInteraction(payload) {
 
     // Display the warning if there is an issue, otherwise, display the
     if(selectElement.childElementCount == 0) {
-        document.getElementById('main-form').style.display = 'hidden';
+        document.getElementById('main-form').style.display = 'none';
         document.getElementById('warning').style.display = 'block';
     } else {
         document.getElementById('main-form').style.display = 'block';
-        document.getElementById('warning').style.display = 'hidden';
+        document.getElementById('warning').style.display = 'none';
 
         // if we have a previously selected value, repopulate that value.
         if(selectedValue) {
