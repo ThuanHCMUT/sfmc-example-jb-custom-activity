@@ -10,6 +10,7 @@ const submodules = [
 const app = express();
 
 // parse application/json
+app.set('trust proxy', 1);
 app.use(bodyParser.json())
 
 app.set('port', (process.env.PORT || 8080));

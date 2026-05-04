@@ -1,10 +1,10 @@
 module.exports = function configJSON(req) {
-  const host = req.headers.host;
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
   return {
     workflowApiVersion: '1.1',
     metaData: {
       // the location of our icon file
-      icon: `https://${host}/modules/discount-code/images/icon.png`,
+      icon: `https://${host}/modules/discount-code/images/icon.svg`,
       category: 'Custom'
     },
     // For Custom Activity this must say, "REST"
