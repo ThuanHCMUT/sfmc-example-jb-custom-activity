@@ -9,8 +9,16 @@ const submodules = [
 
 const app = express();
 
-// parse application/json
 app.set('trust proxy', 1);
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
+
+// parse application/json
 app.use(bodyParser.json())
 
 app.set('port', (process.env.PORT || 8080));

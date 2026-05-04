@@ -19,8 +19,14 @@ module.exports = function discountCodeExample(app, options) {
     const moduleDirectory = `${options.rootDirectory}/modules/discount-code`;
 
     // setup static resources
-    app.use('/modules/discount-code/dist', express.static(`${moduleDirectory}/dist`));
-    app.use('/modules/discount-code/images', express.static(`${moduleDirectory}/images`));
+    const staticOptions = {
+        setHeaders: (res) => {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.exacttarget.com https://*.marketingcloudapps.com https://*.salesforce.com");
+        }
+    };
+    app.use('/modules/discount-code/dist', express.static(`${moduleDirectory}/dist`, staticOptions));
+    app.use('/modules/discount-code/images', express.static(`${moduleDirectory}/images`, staticOptions));
 
     // setup the index redirect
     app.get('/modules/discount-code/', function(req, res) {

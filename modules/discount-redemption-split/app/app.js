@@ -6,8 +6,15 @@ module.exports = function splitExample(app, options) {
     const moduleDirectory = `${options.rootDirectory}/modules/discount-redemption-split`;
 
     // setup static resources
-    app.use('/modules/discount-redemption-split/dist', express.static(`${moduleDirectory}/dist`));
-    app.use('/modules/discount-redemption-split/images', express.static(`${moduleDirectory}/images`));
+    const staticOptions = {
+        setHeaders: (res) => {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.exacttarget.com https://*.marketingcloudapps.com https://*.salesforce.com");
+        }
+    };
+    app.use('/modules/discount-redemption-split/dist', express.static(`${moduleDirectory}/dist`, staticOptions));
+    app.use('/modules/discount-redemption-split/images', express.static(`${moduleDirectory}/images`, staticOptions));
+
 
     // setup the index redirect
     app.get('/modules/discount-redemption-split/', function(req, res) {
