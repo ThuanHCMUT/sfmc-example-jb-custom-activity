@@ -28,10 +28,7 @@ A webapp will be available at http://localhost:8080/
 You will be greeted with a landing page with links to the various examples we've created.
 
 ## Deployment
-You can deploy this example to Heroku and start working with Journey Builder Custom Activities Today!
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy) 
-
+You can deploy this example to Render and start working with Journey Builder Custom Activities Today!
 
 ## Examples
 
