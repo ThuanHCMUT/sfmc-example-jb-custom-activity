@@ -10,8 +10,6 @@ drag-and-drop canvas.
 
 Learn more about [Journey Builder](https://www.salesforce.com/products/marketing-cloud/journey-management/)
 
-![JB](https://user-images.githubusercontent.com/876030/80716658-4db7ab00-8ace-11ea-9775-9b373cf0a18e.png)
-
 ## Getting Started
 
 The quickest way to get started is to install [Node.js](https://nodejs.org/) then run the app locally:
