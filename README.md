@@ -8,8 +8,6 @@ Journey Builder is a marketing planning tool that integrates the various channel
 ecosystem. The application empowers marketers to manage the customer life cycle by composing a Journey workflow on a 
 drag-and-drop canvas.
 
-Learn more about [Journey Builder](https://www.salesforce.com/products/marketing-cloud/journey-management/)
-
 ## Getting Started
 
 The quickest way to get started is to install [Node.js](https://nodejs.org/) then run the app locally:
