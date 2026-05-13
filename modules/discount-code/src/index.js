@@ -37,6 +37,13 @@ document.addEventListener('DOMContentLoaded', function main() {
     // Journey Builder will respond with "initActivity" after it receives the "ready" signal
     connection.on('initActivity', onInitActivity);
 
+    connection.on('requestedSchema', function(schema) {
+        renderSchemaDropdown('emailField', schema);
+        renderSchemaDropdown('tierField', schema);
+    });
+
+    connection.trigger('requestSchema');
+
 
     // We're all set! let's signal Journey Builder
     // that we're ready to receive the activity payload...
@@ -71,10 +78,19 @@ function onInitActivity(payload) {
     // check if this activity has an incoming argument.
     // this would be set on the server side when the activity executes
     // (take a look at execute() in ./discountCode/app.js to see where that happens)
-    const discountArgument = inArguments.find((arg) => arg.discount);
-
+    // const discountArgument = inArguments.find((arg) => arg.discount);
+    const config = flattenInArguments(inArguments);
+    const discountArgument = config.discount;
     console.log('Discount Argument', discountArgument);
 
+    setInputValue('discount', discountArgument || 10);
+    setInputValue('campaignCode', config.campaignCode || 'DEMO_CAMPAIGN');
+    setInputValue('couponPoolId', config.couponPoolId || 'DEFAULT_POOL');
+
+    if(config.email) {
+        setSelectedValue('email', config.email);
+    }
+    
     // if a discountCode back argument was set, show the message in the view.
     if (discountArgument) {
         selectDiscountCodeOption(discountArgument.discount);
@@ -105,6 +121,42 @@ function onDoneButtonClick() {
     console.log('Sending message back to updateActivity');
     console.log('saving\n', JSON.stringify(activity, null, 4));
     console.log('--------------------------------------------------------------');
+
+    const discount = Number(document.getElementById('discount').value);
+    const campaignCode = document.getElementById('campaignCode').value;
+    const couponPoolId = document.getElementById('couponPoolId').value;
+    const emailField = document.getElementById('emailField').value;
+    const tierField = document.getElementById('tierField').value;
+
+    activity.arguments.execute.inArguments = [
+        {
+            discount
+        },
+        {
+            campaignCode
+        },
+        {
+            couponPoolId
+        },
+        {
+            contactKey: "{{Context.Key}}"
+        }
+    ];
+
+    if (emailField) {
+        activity.arguments.execute.inArguments.push({
+            email: emailField
+        });
+    }
+
+    if (tierField) {
+        activity.arguments.execute.inArguments.push({
+            tier: tierField
+        });
+    }
+
+    activity.metaData = activity.metaData || {};
+    activity.metaData.isConfigured = true;
 
     connection.trigger('updateActivity', activity);
 }
@@ -209,4 +261,54 @@ function setupExampleTestHarness() {
             }
         });
     };
+}
+
+function flattenInArguments(inArguments) {
+    return (inArguments || []).reduce((acc, item) => {
+        return Object.assign(acc, item);
+    }, {});
+}
+
+function setInputValue(id, value) {
+    const input = document.getElementById(id);
+
+    if (input) {
+        input.value = value;
+    } else {
+        console.log('Could not find input with id', id);
+    }
+}
+
+function setSelectedValue(name, value) {
+    const select = document.querySelector(`select[name="${name}"]`);
+
+    if (select) {
+        const option = select.querySelector(`option[value="${value}"]`);
+
+        if (option) {
+            option.selected = true;
+        } else {
+            console.log('Could not find option with value', value);
+        }
+    } else {
+        console.log('Could not find select with name', name);
+    }
+}
+
+function renderSchemaDropdown(id, schema) {
+    const select = document.getElementById(id);
+
+    if(!select || !Array.isArray(schema)) {
+        console.log('Invalid arguments for renderSchemaDropdown');
+        return;
+    }
+
+    select.innerHTML = '<option value="">-- Select a field --</option>';
+
+    schema.forEach(field => {
+        const option = document.createElement('option');
+        option.value = field.key;
+        option.textContent = field.key.split('.').pop();
+        select.appendChild(option);
+    });
 }

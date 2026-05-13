@@ -21,6 +21,9 @@ module.exports = function configJSON(req) {
         inArguments: [
           {
             discount: 10
+          },
+          {
+            campaignCode: "DEMO_CAMPAIGN"
           }
         ],
         outArguments: [],
@@ -38,6 +41,9 @@ module.exports = function configJSON(req) {
       }
     },
     configurationArguments: {
+      save: {
+        url: `https://${host}/modules/discount-code/save`
+      },
       publish: {
         url: `https://${host}/modules/discount-code/publish`
       },
@@ -67,6 +73,16 @@ module.exports = function configJSON(req) {
             },
             discount: {
               dataType: 'Number',
+              direction: 'out',
+              access: 'visible'
+            },
+            status: {
+              dataType: 'Text',
+              direction: 'out',
+              access: 'visible'
+            },
+            expiresAt: {
+              dataType: 'Text',
               direction: 'out',
               access: 'visible'
             }
