@@ -9,8 +9,8 @@
 <body>
 <div class="slds-form slds-m-around--medium">
     <div class="slds-form-element slds-m-bottom_small">
-        <label class="slds-form-element__label" for="discount-code">Select Label</label>
-        <div class="slds-form-element__control">
+        <label class="slds-form-element__label" for="discount-code">Discount percent</label>
+        <!-- <div class="slds-form-element__control">
             <div class="slds-select_container">
                 <select class="slds-select" id="discount-code">
                     <option value="10">10%</option>
@@ -19,8 +19,48 @@
                     <option value="25">25%</option>
                 </select>
             </div>
+        </div> -->
+        <div class="slds-form-element__control">
+            <input id="discount" class="slds-input" type="number" min="1" max="90" value="10" />
         </div>
     </div>
+
+    
+    <div class="slds-form-element slds-m-bottom_medium">
+        <label class="slds-form-element__label" for="couponPoolId">
+        Coupon pool
+        </label>
+        <div class="slds-form-element__control">
+        <select id="couponPoolId" class="slds-select">
+            <option value="DEFAULT_POOL">Default Pool</option>
+            <option value="VIP_POOL">VIP Pool</option>
+            <option value="SUMMER_POOL">Summer Pool</option>
+        </select>
+        </div>
+    </div>
+
+    <div class="slds-form-element slds-m-bottom_medium">
+        <label class="slds-form-element__label" for="emailField">
+        Email field from Entry Source
+        </label>
+        <div class="slds-form-element__control">
+        <select id="emailField" class="slds-select">
+            <option value="">-- Select a field --</option>
+        </select>
+        </div>
+    </div>
+
+    <div class="slds-form-element slds-m-bottom_medium">
+        <label class="slds-form-element__label" for="tierField">
+        Customer tier field from Entry Source
+        </label>
+        <div class="slds-form-element__control">
+        <select id="tierField" class="slds-select">
+            <option value="">-- Select a field --</option>
+        </select>
+        </div>
+    </div>
+
 </div>
 <div id="discount-code-output" class="slds-text-heading_small"></div>
 <div class="slds-docked-form-footer" style="justify-content: flex-end">

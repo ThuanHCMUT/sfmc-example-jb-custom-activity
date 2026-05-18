@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function main() {
 
     connection.trigger('requestSchema');
 
-
     // We're all set! let's signal Journey Builder
     // that we're ready to receive the activity payload...
 
@@ -54,109 +53,192 @@ document.addEventListener('DOMContentLoaded', function main() {
 
 // this function is triggered by Journey Builder via Postmonger.
 // Journey Builder will send us a copy of the activity here
+// function onInitActivity(payload) {
+
+//     // set the activity object from this payload. We'll refer to this object as we
+//     // modify it before saving.
+//     activity = payload || {};
+
+//     const hasInArguments = Boolean(
+//         activity.arguments &&
+//         activity.arguments.execute &&
+//         activity.arguments.execute.inArguments &&
+//         activity.arguments.execute.inArguments.length > 0
+//     );
+
+//     const inArguments = hasInArguments ? activity.arguments.execute.inArguments : [];
+
+//     console.log('-------- triggered:onInitActivity({obj}) --------');
+//     console.log('activity:\n ', JSON.stringify(activity, null, 4));
+//     console.log('Has In Arguments: ', hasInArguments);
+//     console.log('inArguments', inArguments);
+//     console.log('-------------------------------------------------');
+
+//     // check if this activity has an incoming argument.
+//     // this would be set on the server side when the activity executes
+//     // (take a look at execute() in ./discountCode/app.js to see where that happens)
+//     // const discountArgument = inArguments.find((arg) => arg.discount);
+//     const config = flattenInArguments(inArguments);
+//     const discountArgument = config.discount;
+//     console.log('Discount Argument', discountArgument);
+
+//     setInputValue('discount', discountArgument || 10);
+//     setInputValue('campaignCode', config.campaignCode || 'DEMO_CAMPAIGN');
+//     setInputValue('couponPoolId', config.couponPoolId || 'DEFAULT_POOL');
+
+//     if(config.email) {
+//         setSelectedValue('email', config.email);
+//     }
+    
+//     // if a discountCode back argument was set, show the message in the view.
+//     if (discountArgument) {
+//         selectDiscountCodeOption(discountArgument.discount);
+//     }
+
+//     // if the discountCode back argument doesn't exist the user can pick
+//     // a discountCode message from the drop down list. the discountCode back arg
+//     // will be set once the journey executes the activity
+// }
+
+
 function onInitActivity(payload) {
+    activity = payload || {};
 
-    // set the activity object from this payload. We'll refer to this object as we
-    // modify it before saving.
-    activity = payload;
+    activity.arguments = activity.arguments || {};
+    activity.arguments.execute = activity.arguments.execute || {};
+    activity.arguments.execute.inArguments = activity.arguments.execute.inArguments || [];
 
-    const hasInArguments = Boolean(
-        activity.arguments &&
-        activity.arguments.execute &&
-        activity.arguments.execute.inArguments &&
-        activity.arguments.execute.inArguments.length > 0
-    );
-
-    const inArguments = hasInArguments ? activity.arguments.execute.inArguments : [];
+    const config = flattenInArguments(activity.arguments.execute.inArguments);
 
     console.log('-------- triggered:onInitActivity({obj}) --------');
     console.log('activity:\n ', JSON.stringify(activity, null, 4));
-    console.log('Has In Arguments: ', hasInArguments);
-    console.log('inArguments', inArguments);
+    console.log('config:\n ', JSON.stringify(config, null, 4));
     console.log('-------------------------------------------------');
 
-    // check if this activity has an incoming argument.
-    // this would be set on the server side when the activity executes
-    // (take a look at execute() in ./discountCode/app.js to see where that happens)
-    // const discountArgument = inArguments.find((arg) => arg.discount);
-    const config = flattenInArguments(inArguments);
-    const discountArgument = config.discount;
-    console.log('Discount Argument', discountArgument);
-
-    setInputValue('discount', discountArgument || 10);
+    setInputValue('discount', config.discount || 10);
     setInputValue('campaignCode', config.campaignCode || 'DEMO_CAMPAIGN');
-    setInputValue('couponPoolId', config.couponPoolId || 'DEFAULT_POOL');
+    setSelectedValueById('couponPoolId', config.couponPoolId || 'DEFAULT_POOL');
 
-    if(config.email) {
-        setSelectedValue('email', config.email);
-    }
-    
-    // if a discountCode back argument was set, show the message in the view.
-    if (discountArgument) {
-        selectDiscountCodeOption(discountArgument.discount);
+    if (config.emailFieldKey) {
+        setSelectedValueById('emailField', config.emailFieldKey);
     }
 
-    // if the discountCode back argument doesn't exist the user can pick
-    // a discountCode message from the drop down list. the discountCode back arg
-    // will be set once the journey executes the activity
+    if (config.tierFieldKey) {
+        setSelectedValueById('tierField', config.tierFieldKey);
+    }
+
+    document.getElementById('done').removeAttribute('disabled');
 }
 
+// function onDoneButtonClick() {
+//     // we set must metaData.isConfigured in order to tell JB that
+//     // this activity is ready for activation
+//     activity.metaData.isConfigured = true;
+
+//     // get the option that the user selected and save it to
+//     const select = document.getElementById('discount-code');
+//     const option = select.options[select.selectedIndex];
+
+//     activity.arguments.execute.inArguments = [{
+//         discount: option.value,
+//     }];
+
+//     // you can set the name that appears below the activity with the name property
+//     activity.name = `Issue ${activity.arguments.execute.inArguments[0].discount}% Code`;
+
+//     console.log('------------ triggering:updateActivity({obj}) ----------------');
+//     console.log('Sending message back to updateActivity');
+//     console.log('saving\n', JSON.stringify(activity, null, 4));
+//     console.log('--------------------------------------------------------------');
+
+//     const discount = Number(document.getElementById('discount').value);
+//     const campaignCode = document.getElementById('campaignCode').value;
+//     const couponPoolId = document.getElementById('couponPoolId').value;
+//     const emailField = document.getElementById('emailField').value;
+//     const tierField = document.getElementById('tierField').value;
+
+//     activity.arguments.execute.inArguments = [
+//         {
+//             discount
+//         },
+//         {
+//             campaignCode
+//         },
+//         {
+//             couponPoolId
+//         },
+//         {
+//             contactKey: "{{Context.Key}}"
+//         }
+//     ];
+
+//     if (emailField) {
+//         activity.arguments.execute.inArguments.push({
+//             email: emailField
+//         });
+//     }
+
+//     if (tierField) {
+//         activity.arguments.execute.inArguments.push({
+//             tier: tierField
+//         });
+//     }
+
+//     activity.metaData = activity.metaData || {};
+//     activity.metaData.isConfigured = true;
+
+//     connection.trigger('updateActivity', activity);
+// }
+
+
 function onDoneButtonClick() {
-    // we set must metaData.isConfigured in order to tell JB that
-    // this activity is ready for activation
-    activity.metaData.isConfigured = true;
+    if (!activity) {
+        console.error('Activity has not been initialized.');
+        return;
+    }
 
-    // get the option that the user selected and save it to
-    const select = document.getElementById('discount-code');
-    const option = select.options[select.selectedIndex];
-
-    activity.arguments.execute.inArguments = [{
-        discount: option.value,
-    }];
-
-    // you can set the name that appears below the activity with the name property
-    activity.name = `Issue ${activity.arguments.execute.inArguments[0].discount}% Code`;
-
-    console.log('------------ triggering:updateActivity({obj}) ----------------');
-    console.log('Sending message back to updateActivity');
-    console.log('saving\n', JSON.stringify(activity, null, 4));
-    console.log('--------------------------------------------------------------');
+    activity.arguments = activity.arguments || {};
+    activity.arguments.execute = activity.arguments.execute || {};
 
     const discount = Number(document.getElementById('discount').value);
-    const campaignCode = document.getElementById('campaignCode').value;
+    const campaignCode = document.getElementById('campaignCode').value.trim();
     const couponPoolId = document.getElementById('couponPoolId').value;
     const emailField = document.getElementById('emailField').value;
     const tierField = document.getElementById('tierField').value;
 
     activity.arguments.execute.inArguments = [
-        {
-            discount
-        },
-        {
-            campaignCode
-        },
-        {
-            couponPoolId
-        },
-        {
-            contactKey: "{{Context.Key}}"
-        }
+        { discount },
+        { campaignCode },
+        { couponPoolId },
+        { contactKey: '{{Context.ContactKey}}' }
     ];
 
     if (emailField) {
         activity.arguments.execute.inArguments.push({
-            email: emailField
+            email: `{{${emailField}}}`
+        });
+        activity.arguments.execute.inArguments.push({
+            emailFieldKey: emailField
         });
     }
 
     if (tierField) {
         activity.arguments.execute.inArguments.push({
-            tier: tierField
+            customerTier: `{{${tierField}}}`
+        });
+        activity.arguments.execute.inArguments.push({
+            tierFieldKey: tierField
         });
     }
 
     activity.metaData = activity.metaData || {};
     activity.metaData.isConfigured = true;
+
+    activity.name = `Issue ${discount}% Code`;
+
+    console.log('------------ triggering:updateActivity({obj}) ----------------');
+    console.log('saving\n', JSON.stringify(activity, null, 4));
+    console.log('--------------------------------------------------------------');
 
     connection.trigger('updateActivity', activity);
 }
@@ -170,37 +252,52 @@ function onCancelButtonClick() {
     connection.trigger('requestInspectorClose');
 }
 
-function onDiscountCodeSelectChange() {
-    // enable or disable the done button when the select option changes
-    const select = document.getElementById('discount-code');
+// function onDiscountCodeSelectChange() {
+//     // enable or disable the done button when the select option changes
+//     const select = document.getElementById('discount-code');
 
-    if (select.selectedIndex) {
-        document.getElementById('done').removeAttribute('disabled');
-    } else {
-        document.getElementById('done').setAttribute('disabled', '');
-    }
+//     if (select.selectedIndex) {
+//         document.getElementById('done').removeAttribute('disabled');
+//     } else {
+//         document.getElementById('done').setAttribute('disabled', '');
+//     }
 
-    // let journey builder know the activity has changes
-    connection.trigger('setActivityDirtyState', true);
-}
+//     // let journey builder know the activity has changes
+//     connection.trigger('setActivityDirtyState', true);
+// }
 
-function selectDiscountCodeOption(value) {
-    const select = document.getElementById('discount-code');
-    const selectOption = select.querySelector(`[value='${value}']`);
+// function selectDiscountCodeOption(value) {
+//     const select = document.getElementById('discount-code');
+//     const selectOption = select.querySelector(`[value='${value}']`);
 
-    if (selectOption) {
-        selectOption.selected = true;
-        onDiscountCodeSelectChange();
-    } else {
-        console.log('Could not select value from list', `[value='${value}]'`);
-    }
-}
+//     if (selectOption) {
+//         selectOption.selected = true;
+//         onDiscountCodeSelectChange();
+//     } else {
+//         console.log('Could not select value from list', `[value='${value}]'`);
+//     }
+// }
+
+// function setupEventHandlers() {
+//     // Listen to events on the form
+//     document.getElementById('done').addEventListener('click', onDoneButtonClick);
+//     document.getElementById('cancel').addEventListener('click', onCancelButtonClick);
+//     document.getElementById('discount-code').addEventListener('change', onDiscountCodeSelectChange);
+// }
+
 
 function setupEventHandlers() {
-    // Listen to events on the form
     document.getElementById('done').addEventListener('click', onDoneButtonClick);
     document.getElementById('cancel').addEventListener('click', onCancelButtonClick);
-    document.getElementById('discount-code').addEventListener('change', onDiscountCodeSelectChange);
+
+    ['discount', 'campaignCode', 'couponPoolId', 'emailField', 'tierField'].forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('change', function() {
+                connection.trigger('setActivityDirtyState', true);
+            });
+        }
+    });
 }
 
 // this function is for example purposes only. it sets ups a Postmonger
@@ -279,36 +376,82 @@ function setInputValue(id, value) {
     }
 }
 
-function setSelectedValue(name, value) {
-    const select = document.querySelector(`select[name="${name}"]`);
+// function setSelectedValue(name, value) {
+//     const select = document.querySelector(`select[name="${name}"]`);
 
-    if (select) {
-        const option = select.querySelector(`option[value="${value}"]`);
+//     if (select) {
+//         const option = select.querySelector(`option[value="${value}"]`);
 
-        if (option) {
-            option.selected = true;
-        } else {
-            console.log('Could not find option with value', value);
-        }
+//         if (option) {
+//             option.selected = true;
+//         } else {
+//             console.log('Could not find option with value', value);
+//         }
+//     } else {
+//         console.log('Could not find select with name', name);
+//     }
+// }
+
+function setSelectedValueById(id, value) {
+    const select = document.getElementById(id);
+
+    if (!select) {
+        console.log('Could not find select with id', id);
+        return;
+    }
+
+    const option = select.querySelector(`option[value="${value}"]`);
+
+    if (option) {
+        option.selected = true;
     } else {
-        console.log('Could not find select with name', name);
+        console.log('Could not find option with value', value);
     }
 }
+
+// function renderSchemaDropdown(id, schema) {
+//     const select = document.getElementById(id);
+
+//     if(!select || !Array.isArray(schema)) {
+//         console.log('Invalid arguments for renderSchemaDropdown');
+//         return;
+//     }
+
+//     select.innerHTML = '<option value="">-- Select a field --</option>';
+
+//     schema.forEach(field => {
+//         const option = document.createElement('option');
+//         option.value = field.key;
+//         option.textContent = field.key.split('.').pop();
+//         select.appendChild(option);
+//     });
+// }
+
 
 function renderSchemaDropdown(id, schema) {
     const select = document.getElementById(id);
 
-    if(!select || !Array.isArray(schema)) {
+    if (!select || !Array.isArray(schema)) {
         console.log('Invalid arguments for renderSchemaDropdown');
         return;
     }
 
+    const existingValue = select.value;
+
     select.innerHTML = '<option value="">-- Select a field --</option>';
 
-    schema.forEach(field => {
+    schema.forEach((field) => {
+        if (!field || !field.key) {
+            return;
+        }
+
         const option = document.createElement('option');
         option.value = field.key;
         option.textContent = field.key.split('.').pop();
         select.appendChild(option);
     });
+
+    if (existingValue) {
+        setSelectedValueById(id, existingValue);
+    }
 }

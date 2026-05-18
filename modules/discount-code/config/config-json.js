@@ -24,6 +24,9 @@ module.exports = function configJSON(req) {
           },
           {
             campaignCode: "DEMO_CAMPAIGN"
+          },
+          {
+            couponPoolId: "DEFAULT_POOL"
           }
         ],
         outArguments: [],
@@ -37,21 +40,26 @@ module.exports = function configJSON(req) {
         // wait in ms between retry.
         retryDelay: 1000,
         // The number of concurrent requests Journey Builder will send all together
-        concurrentRequests: 5
+        concurrentRequests: 5,
+        useJwt
       }
     },
     configurationArguments: {
       save: {
-        url: `https://${host}/modules/discount-code/save`
+        url: `https://${host}/modules/discount-code/save`,
+        useJwt
       },
       publish: {
-        url: `https://${host}/modules/discount-code/publish`
+        url: `https://${host}/modules/discount-code/publish`,
+        useJwt
       },
       validate: {
-        url: `https://${host}/modules/discount-code/validate`
+        url: `https://${host}/modules/discount-code/validate`,
+        useJwt
       },
       stop: {
-        url: `https://${host}/modules/discount-code/stop`
+        url: `https://${host}/modules/discount-code/stop`,
+        useJwt
       }
     },
     userInterfaces: {
